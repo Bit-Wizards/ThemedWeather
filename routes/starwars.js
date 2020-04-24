@@ -1,12 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const request = require("request");
+const weather = require('../services/openweather');
 
 
 router.get('/', (req, res) =>{
-
-    res.send('StarWars Data');
-
+  res.send('StarWars Data');
 });
 
 module.exports = router;

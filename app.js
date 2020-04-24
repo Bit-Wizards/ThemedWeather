@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
 });
 
 //Connect To DB
-// useUnifiedTopology: true creates a timout, removed for now until I find a fix
+// useUnifiedTopology: true creates a timeout, removed for now until I find a fix
 const uri = process.env.DB_CONNECTION;
 const client = new MongoClient(uri, {useNewUrlParser: true });
 client.connect(err => {
