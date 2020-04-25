@@ -1,32 +1,19 @@
 const mongoose = require('mongoose');
 
-const StarwarsSchema = mongoose.Schema({
+const Schema = mongoose.Schema;
+const ObjectId = Schema.ObjectId;
 
-    _id : {
-        type: mongoose.Schema.Types.ObjectId,
-        require: true
-    },
-    name : {
-        type: String,
-        require: true
-    },
-    min_temp : {
-        type: mongoose.Schema.Types.Number,
-        require: true
-    },
-    max_temp : {
-        type: mongoose.Schema.Types.Number,
-        require: true
-    },
-    img: {
-        type: String,
-        require: true
-    },
-    color: {
-        type: String,
-        require: true
-    }
-
+const PlanetSchema = new Schema({
+	_id: ObjectId,
+	name: String,
+	min_temp: Number,
+	max_temp: Number,
+	img: String,
+	color: String
+}, {
+	collection: 'starwars'
 });
 
-module.exports = mongoose.model('Starwars', StarwarsSchema);
+const PlanetModel = mongoose.model('Planet', PlanetSchema, 'starwars');
+
+module.exports = PlanetModel;
