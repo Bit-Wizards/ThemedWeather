@@ -36,6 +36,11 @@ function getWeatherData(data, callback) {
 	url += "&apiKey=" + '9613fbb4262982d7f9255eeed1037cd1';
 
 	request(url, (err, res) => {
+		if (res.cod != 200) {
+			callback(res, null);
+			return;
+		} 
+
 		callback(err, res);
 	});
 }

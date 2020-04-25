@@ -1,80 +1,51 @@
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose');
-const weather = require('../services/openweather');
 
+const weather = require('../services/openweather');
 const starwars = require('../models/starwars');
 
 router.get('/', (req, res) =>{
-  starwars.find({}, (err, docs) => {
-    res.send(docs);
+
+  weather.getWeatherData({
+    cityId: req.query.cityId,
+    cityName: req.query.cityName,
+    countryCode: req.query.countryCode,
+    stateName: req.query.stateName,
+    lat: req.query.lat,
+    lon: req.query.lon
+  }, (err, weatherRes) => {
+
+    if (err) {
+      res.send(err);
+      return;
+    }
+    
+    starwars.find({})
+    .then((docs) => {
+      res.send({weather: weatherRes, data: GetObjectWithTemp(docs, weatherRes)});
+    })
+    .catch((err) => {
+      res.send({message: err});
+    });
+  
   });
 });
 
-module.exports = router;
+function GetObjectWithTemp (objects, weatherData) {
 
-/*
-router.get('/starwars', function(req, res, next) {
+  let temp = weatherData.main.temp;
+  let humidity = weatherData.main.humidity;
 
-  if ((req.query.lat == undefined || req.query.lat == undefined) && req.query.city == undefined) {
-    next({message: "No location chosen"});
-    return;
-  }
-
-  let url = "https://api.openweathermap.org/data/2.5/weather?";
-  if (req.query.city) {
-    url += `q=${req.query.city}`;
-  } else {
-    url += `lat=${req.query.lat}&lon=${req.query.long}`;
-  }
-  url += `&appid=${apikey}`;
-
-
-  request(url, {json: true}, (wErr, wRes, wBody) => {
-    if(wBody.cod != 200) {
-      next(wBody);
+  let object;
+  objects.forEach((obj) => {
+    if (temp < obj.min_temp || temp > obj.max_temp) {
       return;
     }
 
-    let p = getPlanet(wBody.main.temp, wBody.main.humidity);
-
-    res.send(p);
+    object = obj;
   });
-});
+
+  return object
+}
 
 module.exports = router;
-
-  function getPlanet (temp, humidity) {
-
-
-    let currentPlanet;
-
-
-    planets.forEach(planet => {
-      // Temperature
-      if (temp < planet.min_temp || temp > planet.max_temp) {
-        return;
-      }
-
-      // Humidity
-      if (planet.min_humidity && humidity < planet.min_humidity) {
-        return;
-      }
-
-      currentPlanet = planet;
-    });
-
-    if (!currentPlanet) {
-      planets.forEach(planet => {
-        // Temperature
-        if (temp < planet.min_temp || temp > planet.max_temp) {
-          return;
-        }
-
-        currentPlanet = planet;
-      });
-    }
-
-    return currentPlanet;
-  }
-*/
