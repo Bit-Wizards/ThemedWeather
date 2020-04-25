@@ -1,11 +1,7 @@
 const mongoose = require('mongoose');
-
+const collection_name = "starwars"; 
 const StarwarsSchema = mongoose.Schema({
 
-    _id : {
-        type: mongoose.Schema.Types.ObjectId,
-        require: true
-    },
     name : {
         type: String,
         require: true
@@ -27,6 +23,7 @@ const StarwarsSchema = mongoose.Schema({
         require: true
     }
 
-});
+}, { collection: collection_name });
 
-module.exports = mongoose.model('Starwars', StarwarsSchema);
+
+module.exports = mongoose.model('themed_weather', StarwarsSchema, collection_name);

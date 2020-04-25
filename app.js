@@ -1,44 +1,38 @@
 const express = require('express');
+
 const app = express();
+
+const bodyParser = require('body-parser');
+const cors = require('cors');
+app.use(cors())
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
+
+
+const dbConfig = require('./config/database.config.js');
 const mongoose = require('mongoose');
-const MongoClient = require('mongodb').MongoClient;
-const Starwars = require('./models/Starwars')
 
+mongoose.Promise = global.Promise;
 
-require('dotenv/config');
+mongoose.connect(dbConfig.url, {
+  useNewUrlParser: true
+}).then(() => {
+  console.log("Successfully connected to the database");    
+}).catch(err => {
+  console.log('Could not connect to the database. Exiting now...', err);
+  process.exit();
+});
 
-//Middlewares
-
-
-//Import Routes
-const starwarsRoute = require('./routes/starwars')
-
-app.use('/starwars', starwarsRoute);
 
 //Routes
 app.get('/', (req, res) => {
 
-  res.send("We are on home");
+  res.json({"Message" : "Welcome to the Weather Themed API"});
 
 });
 
-//Connect To DB
-// useUnifiedTopology: true creates a timeout, removed for now until I find a fix
-const uri = process.env.DB_CONNECTION;
+require('./app/routes/starwars.routes.js')(app);
 
-mongoose.connect(uri, {useNewUrlParser: true}).then(() => {
-console.log("Connected to Database");
-}).catch((err) => {
-    console.log("Not Connected to Database ERROR! ", err);
+app.listen(3000, () => {
+  console.log("Server is listening on port 3000");
 });
-
-var db = mongoose.connection;
-
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-  // we're connected!
-});
-var S = mongoose.model("themed_weather",Starwars.schema,"starwars").find({});
-
-//Listening
-app.listen(3000);
