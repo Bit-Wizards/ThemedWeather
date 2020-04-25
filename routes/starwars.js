@@ -1,10 +1,14 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const weather = require('../services/openweather');
 
+const starwars = require('../models/starwars');
 
 router.get('/', (req, res) =>{
-  res.send('StarWars Data');
+  starwars.find({}, (err, docs) => {
+    res.send(docs);
+  });
 });
 
 module.exports = router;
